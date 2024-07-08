@@ -119,10 +119,10 @@ TODO: list of other digital pot meters / rheostats.
 - **MCP4261(uint8_t select, uint8_t shutdown, \__SPI_CLASS__ \* mySPI = &SPI)**
 HW SPI constructor.
 - **MCP4261(uint8_t select, uint8_t shutdown, uint8_t dataIn, uint8_t dataOut, uint8_t clock)**
-SW SPI Constructor.
-- **void begin(uint8_t value = MCP42XX_MIDDLE_VALUE)**
-- **void reset(uint8_t value = MCP42XX_MIDDLE_VALUE)**
-- **uint8_t pmCount()** returns 1 or 2, depending on type.
+SW SPI Constructor. The dataIn pin is not used yet.
+- **void begin(uint8_t value)** user must explicit set initial value.
+- **void reset(uint8_t value)** user must explicit set initial value.
+- **uint8_t pmCount()** returns 1 or 2, depending on device type.
 
 
 ### Set Volatile Values
