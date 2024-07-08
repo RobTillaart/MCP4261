@@ -174,28 +174,26 @@ So use with care.
 
 #### Should 
 
-- investigate performance 
-  - AVR SW SPI
-  - why is incr/decr slower than setValue?
-
-#### Could
-
-- TCON ?
 - read registers.
   - read values.
   - status register
+  - TCON
+
+#### Could
+
 - EEPROM support
   - 10 registers, 10 bit
   - bool writeEEPROM(address, uint16_t value);
   - uint16_t readEEPROM(address);
 - write to non-volatile register 02/03 to set Power On Reset values
-  - read when reset.
+  - read when reset?
   - how to fit in use model.
 - unit tests
 - examples
 - error handling
   - improve return values
-
+- investigate performance 
+  - AVR SW SPI?
 
 #### Won't
 

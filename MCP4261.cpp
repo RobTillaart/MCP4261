@@ -100,6 +100,7 @@ bool MCP4261::setValue(uint8_t pm, uint16_t value)
 {
   if (pm >= _pmCount) return false;
   if (value > _maxValue) return false;
+  _value[pm] = value;
 
   uint8_t cmd = 0x00;
   if (pm == 1) cmd = 0x10;
@@ -120,9 +121,11 @@ bool MCP4261::incrValue(uint8_t pm)
 {
   if (pm >= _pmCount) return false;
   if (_value[pm] >= _maxValue) return false;
+  _value[pm]++;
+
   uint8_t cmd = 0x04;
   if (pm == 1) cmd = 0x14;
-  writeDevice(1, cmd, 0x00);  //  DUMMY
+  writeDevice(1, cmd, cmd);  //  value2 = DUMMY
   return true;
 }
 
@@ -131,9 +134,11 @@ bool MCP4261::decrValue(uint8_t pm)
 {
   if (pm >= _pmCount) return false;
   if (_value[pm] == 0) return false;
+  _value[pm]--;
+
   uint8_t cmd = 0x08;
   if (pm == 1) cmd = 0x18;
-  writeDevice(1, cmd, 0x00);  //  DUMMY
+  writeDevice(1, cmd, cmd);  //  value2 = DUMMY
   return true;
 }
 

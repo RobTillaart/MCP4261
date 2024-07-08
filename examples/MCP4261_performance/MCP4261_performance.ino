@@ -3,7 +3,8 @@
 //  AUTHOR: Rob Tillaart
 // PURPOSE: demo
 //     URL: https://github.com/RobTillaart/MCP4261
-
+//
+//  under investigation.
 
 #include "MCP4261.h"
 
@@ -12,7 +13,7 @@ uint32_t start, stop;
 
 
 //  select, shutdown, dataIn, dataOut, clock == SOFTWARE SPI
-// MCP4261 pot(10, 6, 7, 8, 9);
+//  MCP4261 pot(10, 6, 7, 8, 9);
 
 //  select, shutdown, &SPI === HW SPI UNO clock = 13, data = 11
 MCP4261 pot(10, 6, &SPI);
@@ -57,26 +58,30 @@ void test_timing()
   delay(100);
 
   start = micros();
-  for (int i = 0; i < 500; i++)
+  for (int i = 0; i < 250; i++)
   {
-    pot.setValue(0, i);  //  auto wrap is fast...
-    pot.setValue(1, i++);  //  auto wrap is fast...
+    pot.setValue(0, 42);
+    pot.setValue(1, 43);
   }
   stop = micros();
-  Serial.print("1000 x setValue():\t");
-  Serial.println(stop - start);
+  Serial.print("500 x setValue():\t");
+  Serial.print(stop - start);
+  Serial.print("\t");
+  Serial.println((stop - start) / 500.0);
   delay(100);
 
   volatile int x = 0;
   start = micros();
-  for (int i = 0; i < 500; i++)
+  for (int i = 0; i < 250; i++)
   {
     x += pot.getValue(0);
     x += pot.getValue(1);
   }
   stop = micros();
-  Serial.print("1000 x getValue():\t");
-  Serial.println(stop - start);
+  Serial.print("500 x getValue():\t");
+  Serial.print(stop - start);
+  Serial.print("\t");
+  Serial.println((stop - start) / 500.0);
   delay(100);
 
   pot.setValue(0);
@@ -88,7 +93,9 @@ void test_timing()
   }
   stop = micros();
   Serial.print("500 x incrValue():\t");
-  Serial.println(stop - start);
+  Serial.print(stop - start);
+  Serial.print("\t");
+  Serial.println((stop - start) / 500.0);
   delay(100);
 
   pot.setValue(255);
@@ -100,7 +107,9 @@ void test_timing()
   }
   stop = micros();
   Serial.print("500 x decrValue():\t");
-  Serial.println(stop - start);
+  Serial.print(stop - start);
+  Serial.print("\t");
+  Serial.println((stop - start) / 500.0);
   delay(100);
 }
 
