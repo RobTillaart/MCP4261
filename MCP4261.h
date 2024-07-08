@@ -92,7 +92,7 @@ protected:
   bool     _hwSPI;
   uint32_t _SPIspeed;
 
-  uint16_t _value[2];
+  uint16_t _value[2] = { 0, 0 };
   uint8_t  _pmCount;
   uint16_t _maxValue;
 

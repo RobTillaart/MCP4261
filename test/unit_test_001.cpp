@@ -49,9 +49,10 @@ unittest(test_constants)
 unittest(test_constructor)
 {
   MCP4261 mcp(10, 6);
-
+  //  before begin.
   assertEqual(2, mcp.pmCount());
-  assertEqual(MCP42XX_MIDDLE_VALUE, mcp.getValue());
+  assertEqual(0, mcp.getValue());
+
 }
 
 
