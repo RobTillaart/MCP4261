@@ -13,10 +13,10 @@ uint32_t start, stop;
 
 
 //  select, shutdown, dataIn, dataOut, clock == SOFTWARE SPI
-//  MCP4261 pot(10, 6, 7, 8, 9);
+MCP4261 pot(10, 6, 7, 8, 9);
 
 //  select, shutdown, &SPI === HW SPI UNO clock = 13, data = 11
-MCP4261 pot(10, 6, &SPI);
+// MCP4261 pot(10, 6, &SPI);
 
 
 void setup()
@@ -29,7 +29,7 @@ void setup()
 
   SPI.begin();
 
-  pot.begin(0);  //  initial value
+  pot.begin();
   pot.setSPIspeed(1000000);
   test_timing();
   pot.setSPIspeed(2000000);

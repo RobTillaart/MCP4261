@@ -25,7 +25,7 @@ void setup()
 
   SPI.begin();
 
-  pot.begin(0);  //  initial value
+  pot.begin();
 
   for (int r = 0; r < 16; r++)
   {

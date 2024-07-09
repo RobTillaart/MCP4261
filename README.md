@@ -33,23 +33,27 @@ value from the device. This is useful to get the start value and more.
 Furthermore the library has two functions to increase and decrease
 the value of a potmeter.
 
-The library supports reading / writing the **Terminal Connect** register.
+The library supports reading / writing the **Terminal Control** register.
 This allows one to disconnect either, A, B or the Wiper pin from the internal
-resistor array. (via bit mask in 0.2.0).
+resistor array. (needs investigation how it works).
 
-The library can read the **status** register, this is e.g. needed to see if one can
+The library can read the **Status** register, this is e.g. needed to see if one can
 write to EEPROM. Note the library does not check this (yet).
 Furthermore the status register shows the status of both the shutdown and write 
 protect pins.
-The **status** register also shows the wiper lock state, however the library
-does not support this function.
+The **Status** register also shows the wiper lock state, however the library
+does not support locking/unlocking the wipers.
 
 Finally the library supports setting and getting from the 10 **EEPROM** locations.
-Only values 0..511 are supported (e.g. 5 x 2 stored wiper states).
+Only 9 bits, so the values 0..511 are supported. 
+E.g. one could use these to store 5 x 2 wiper states or something more exciting.
+
 
 #### Obsolete
 
-Version 0.2.0 has many additions and some fixed so previous versions are obsolete.
+Version 0.2.0 has many additional functions and some were fixed so 0.1.x versions 
+are obsolete.
+
 
 #### Feedback
 
@@ -83,7 +87,7 @@ Support EEPROM?
 
 ### Related
 
-Mainly other digital potentiometers.
+Mainly other digital potentiometers / rheostats.
 
 - https://github.com/RobTillaart/AD520x
 - https://github.com/RobTillaart/AD524X
@@ -101,15 +105,19 @@ Table 4.1 from datasheet (p 29)
 
 |  Address  |  Function                |  Memory Type  |  Notes  |
 |:---------:|:------------------------:|:--------------|:--------|
-|  00h      |  Volatile Wiper 0        |  RAM          |
-|  01h      |  Volatile Wiper 1        |  RAM          |
-|  02h      |  Non-Volatile Wiper 0    |  EEPROM       |  set Power on Reset
-|  03h      |  Non-Volatile Wiper 1    |  EEPROM       |  set Power on Reset
+|  00h      |  Volatile Wiper 0        |  RAM          |  range 0..257 (129)
+|  01h      |  Volatile Wiper 1        |  RAM          |  range 0..257 (129)
+|  02h      |  Non-Volatile Wiper 0    |  EEPROM       |  set Power on Reset, range idem.
+|  03h      |  Non-Volatile Wiper 1    |  EEPROM       |  set Power on Reset, range idem.
 |  04h      |  Volatile TCON Register  |  RAM          |
 |  05h      |  Status Register         |  RAM          |  read only
-|  06-0Fh   |  Data EEPROM             |  EEPROM       |  10 EEPROM 0..511
+|  06-0Fh   |  Data EEPROM             |  EEPROM       |  10 values, range 0..511
 
-needed?
+Is this overview needed?
+
+## Performance indication
+
+TODO table
 
 
 ## Interface
@@ -122,11 +130,12 @@ needed?
 ### Constructor
 
 - **MCP4261(uint8_t select, uint8_t shutdown, \__SPI_CLASS__ \* mySPI = &SPI)**
-HW SPI constructor. If the shutDown pin is not used, set it to 255.
+HW SPI constructor. If the shutDown pin is not used, is should be set to 255.
 - **MCP4261(uint8_t select, uint8_t shutdown, uint8_t dataIn, uint8_t dataOut, uint8_t clock)**
-SW SPI Constructor.
-- **void begin()** initializes the device and reads the default values of the two potmeters.
-- **void reset(uint8_t value)** resets the device to an explicit value.
+SW SPI Constructor. If the shutDown pin is not used, is should be set to 255.
+- **void begin()** initializes the device and reads the default values of the two potmeters
+from the device. These values are cached.
+- **void reset(uint16_t value)** resets the device, and sets both wipers to an explicit value.
 - **uint8_t pmCount()** returns 1 or 2, depending on device type.
 
 
@@ -137,17 +146,17 @@ Value can be 0..257 (129 depending on type).
 Returns true.
 - **bool setValue(uint8_t pm, uint16_t value)** set a single potmeter (0 or 1).
 Returns false if pm > pmCount or if value too large.
-- **uint16_t getValue(uint8_t pm = 0)** returns value from cache.
-- **uint16_t getValueDevice(uint8_t pm = 0)** returns value from the device.
+- **uint16_t getValue(uint8_t pm = 0)** returns value from cache. (fast).
+- **uint16_t getValueDevice(uint8_t pm = 0)** returns value from the device. (robust).
 - **bool incrValue(uint8_t pm)** increments potmeter by 1 if possible. 
-Returns false if this fails.
+Returns false if this fails, e.g. max value reached.
 - **bool decrValue(uint8_t pm)** decrements potmeter by 1 if possible. 
-Returns false if this fails.
+Returns false if this fails, e.g. zero reached.
 
 
 ### Set NON-Volatile Values
 
-- **bool setValueNV(uint8_t pm, uint16_t value)** set power on reset value for potmeter.
+- **bool setValueNV(uint8_t pm, uint16_t value)** set the power on reset value for potmeter.
 - **uint16_t getValueNV(uint8_t pm)** retrieves set value from device.
 
 The NV functions do not check the status register if an EEPROM write is 
@@ -156,7 +165,7 @@ pending.
 
 ### Terminal Control register (TCON)
 
-Needs more investigation how this works.
+Needs more investigation how this works in detail.
 
 To connect and disconnect the A, B and Wiper from the internal resistor array.
 See datasheet form details.
@@ -187,7 +196,7 @@ Returns false if ee > 9 or value out of range.
 - **uint16_t getEEPROM(uint8_t ee)** Returns set value, or 0 if ee > 9.
 
 The EEPROM functions do not check the status register if an EEPROM write is 
-pending.
+pending. (might take up to 10 ms).
 
 
 ### SPI
@@ -214,6 +223,7 @@ Uses the shutdown pin from the constructor.
 #### Must
 
 - improve documentation
+- TODO fix TODO in docs + code
 
 #### Should 
 
@@ -221,10 +231,12 @@ Uses the shutdown pin from the constructor.
   - MCP4131/32/51/52, 
   - MCP4231/32/51/52
 - pending EEPROM write?
-  - 5-10 ms, see page 10 datasheet.
+  - blocking 5-10 ms?, see page 10 datasheet.
   - status check for EEPROM? (robust)
   - lastEE_timestamp? (fast)
-  - what is a good strategy?
+  - What is a good strategy?
+  - **bool isEEWritePending()**?
+  - Also for the NV write function as one needs to write two registers.
 - elaborate TCON settings.
   - investigate behaviour.
 
