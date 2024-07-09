@@ -3,7 +3,9 @@
 //  AUTHOR: Rob Tillaart
 // PURPOSE: demo
 //     URL: https://github.com/RobTillaart/MCP4261
-
+//
+//  Works when readRegister() is made public.
+//  meant for testing only.
 
 #include "MCP4261.h"
 
