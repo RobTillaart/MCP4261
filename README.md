@@ -168,9 +168,9 @@ Returns true.
 Returns false if pm > pmCount or if value too large.
 - **uint16_t getValue(uint8_t pm = 0)** returns value from cache. (fast).
 - **uint16_t getValueDevice(uint8_t pm = 0)** returns value from the device. (robust).
-- **bool incrValue(uint8_t pm)** increments potmeter by 1 if possible. 
+- **bool incrValue(uint8_t pm = 0)** increments potmeter by 1 if possible. 
 Returns false if this fails, e.g. max value reached.
-- **bool decrValue(uint8_t pm)** decrements potmeter by 1 if possible. 
+- **bool decrValue(uint8_t pm = 0)** decrements potmeter by 1 if possible. 
 Returns false if this fails, e.g. zero reached.
 
 

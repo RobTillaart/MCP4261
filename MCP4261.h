@@ -68,8 +68,8 @@ public:
   uint16_t getValue(uint8_t pm = 0);
   uint16_t getValueDevice(uint8_t pm = 0);
 
-  bool     incrValue(uint8_t pm);
-  bool     decrValue(uint8_t pm);
+  bool     incrValue(uint8_t pm = 0);
+  bool     decrValue(uint8_t pm = 0);
 
   //
   //  SET NON-VOLATILE VALUE
@@ -78,7 +78,7 @@ public:
   uint16_t getValueNV(uint8_t pm);  //  always from device
 
   //
-  //  TCON    (bit masks to elaborate)
+  //  TERMINAL CONTROL    (bit masks to elaborate)
   //
   void     setTCONMask(uint16_t mask);  //  only lower 9 bits used.
   uint16_t getTCONMask();

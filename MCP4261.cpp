@@ -186,7 +186,7 @@ uint16_t MCP4261::getValueNV(uint8_t pm)
 
 /////////////////////////////////////////////////////////////////////////////
 //
-//  TCON
+//  TERMINAL CONTROL
 //
 void MCP4261::setTCONMask(uint16_t mask)
 {
