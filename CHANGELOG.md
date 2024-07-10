@@ -11,14 +11,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - use less magic numbers
   - reimplement protected functions
 - remove parameter from **begin()** reads value from device. (breaking)
-- fix the supported range to 0..257 (was 255).
+- fix the supported range to 0..256 (was 255).
 - add **uint16_t getValueDevice(uint8_t pm)**
 - add **uint16_t getValueNV(uint8_t pm)**
-- add **void setTCONmask(uint16_t mask)**
-- add **uint16_t getTCONmask()**
-- add **uint16_t getStatusmask()**
-- add **bool setEEPROM(uint8_t ee, uint16_t value)**
-- add **uint16_t getEEPROM(uint8_t ee)**
+- add **void setTCONMask(uint16_t mask)**
+- add **uint16_t getTCONMask()**
+- add **uint16_t getStatusMask()**
+- add **bool setEEPROM(uint8_t index, uint16_t value)**
+- add **uint16_t getEEPROM(uint8_t index)**
 - update readme.md
 - minor edits.
 

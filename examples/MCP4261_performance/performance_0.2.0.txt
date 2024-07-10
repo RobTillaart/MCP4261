@@ -10,31 +10,36 @@ HW SPI
 
 test_timing
 SPI:	1000000
-500 x setValue():	17168	34.34
-500 x getValue():	380	0.76
-500 x incrValue():	12100	24.20
-500 x decrValue():	11920	23.84
+500 x setValue():	156244	312.49
+500 x getValue():	388	0.78
+500 x getValueDevice():	157156	314.31
+500 x incrValue():	81420	162.84
+500 x decrValue():	81304	162.61
 
 test_timing
 SPI:	2000000
-500 x setValue():	13144	26.29
-500 x getValue():	384	0.77
-500 x incrValue():	10092	20.18
-500 x decrValue():	9968	19.94
+500 x setValue():	156240	312.48
+500 x getValue():	380	0.76
+500 x getValueDevice():	157156	314.31
+500 x incrValue():	81428	162.86
+500 x decrValue():	81296	162.59
 
 test_timing
 SPI:	4000000
-500 x setValue():	11160	22.32
+500 x setValue():	156236	312.47
 500 x getValue():	380	0.76
-500 x incrValue():	9088	18.18
-500 x decrValue():	8964	17.93
+500 x getValueDevice():	157152	314.30
+500 x incrValue():	81424	162.85
+500 x decrValue():	81296	162.59
 
 test_timing
 SPI:	8000000
-500 x setValue():	10156	20.31
+500 x setValue():	156240	312.48
 500 x getValue():	380	0.76
-500 x incrValue():	8588	17.18
-500 x decrValue():	8464	16.93
+500 x getValueDevice():	157148	314.30
+500 x incrValue():	81428	162.86
+500 x decrValue():	81296	162.59
+
 
 
 
@@ -42,8 +47,10 @@ SW SPI
 
 500 x setValue():	156240	312.48
 500 x getValue():	380	0.76
+500 x getValueDevice():	157148	314.30
 500 x incrValue():	81428	162.86
 500 x decrValue():	81296	162.59
+
 
 
 

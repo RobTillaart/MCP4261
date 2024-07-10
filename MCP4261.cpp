@@ -220,21 +220,21 @@ uint16_t MCP4261::getStatusMask()
 //
 //  EEPROM
 //
-bool MCP4261::setEEPROM(uint8_t ee, uint16_t value)
+bool MCP4261::setEEPROM(uint8_t index, uint16_t value)
 {
-  if (ee > 9) return false;
+  if (index > 9) return false;
   if (value > 0x1FF) return false;  //  511
-  uint8_t value1 = MCP4261_CMD_WRITE | (MCP4261_REG_EEPROM(ee) << 4);
+  uint8_t value1 = MCP4261_CMD_WRITE | (MCP4261_REG_EEPROM(index) << 4);
   if (value > 0xFF) value1 |= (value >> 8);
   writeRegister2(value1, value & 0xFF);
   return true;
 }
 
 
-uint16_t MCP4261::getEEPROM(uint8_t ee)
+uint16_t MCP4261::getEEPROM(uint8_t index)
 {
-  if (ee > 9) return 0;  //  0xFFFF ?
-  uint8_t value1 = MCP4261_CMD_READ | (MCP4261_REG_EEPROM(ee) << 4);
+  if (index > 9) return 0;  //  0xFFFF ?
+  uint8_t value1 = MCP4261_CMD_READ | (MCP4261_REG_EEPROM(index) << 4);
   uint16_t value = readRegister(value1);
   return value;
 }
@@ -289,13 +289,6 @@ bool MCP4261::usesHWSPI()
 //
 //  PROTECTED
 //
-
-/*
-TODO - see page 46
-- need read8, read16
-- bid8, bidi16
-*/
-
 
 //
 //  USES SPI MODE 0

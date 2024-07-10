@@ -23,22 +23,24 @@ The MCP4261 library supports both hardware SPI and software SPI up to 10 MHz.
 These series of potmeters (rheostats) come in values of 5, 10, 50 and 100 kΩ (±20%).
 
 Where other potmeters uses a range of 0..127 or 0..255, these series potmeters
-use a range 0..129 and 0..257. This implies some extra care to set the wiper
-to end position. 
+use a range 0..128 (129 steps) and 0..256 (257 steps). 
+This implies some extra care to set the wiper to end position. 
 
 The library supports setting the value of the potmeters and caches this setting.
-This way it can be retrieved very fast. The library also support to fetch the
-value from the device. This is useful to get the start value and more.
+This way it can be retrieved very fast. 
+The library also support to fetch the value from the device. 
+This is useful to get the start value in **begin()** and more.
 
 Furthermore the library has two functions to increase and decrease
 the value of a potmeter.
 
 The library supports reading / writing the **Terminal Control** register.
 This allows one to disconnect either, A, B or the Wiper pin from the internal
-resistor array. (needs investigation how it works).
+resistor array. (needs investigation how it works in detail).
 
 The library can read the **Status** register, this is e.g. needed to see if one can
-write to EEPROM. Note the library does not check this (yet).
+write to EEPROM or to the NON-Volatile registers (power on values). 
+Note the library does not check this.
 Furthermore the status register shows the status of both the shutdown and write 
 protect pins.
 The **Status** register also shows the wiper lock state, however the library
@@ -68,14 +70,14 @@ However only the MCP4261 is tested.
 
 |  Number  |  Type    |  pots  |   POR    |  MaxValue  |  Notes  |
 |:--------:|:--------:|:------:|:--------:|:----------:|:--------|
-| MCP4141  | Potmeter |   1    | NV-Wiper |    129     |
-| MCP4142  | Rheostat |   1    | NV-Wiper |    129     |
-| MCP4161  | Potmeter |   1    | NV-Wiper |    257     |
-| MCP4162  | Rheostat |   1    | NV-Wiper |    257     |
-| MCP4241  | Potmeter |   2    | NV-Wiper |    129     |
-| MCP4242  | Rheostat |   2    | NV-Wiper |    129     |
-| MCP4261  | Potmeter |   2    | NV-Wiper |    257     |  base class, under test.
-| MCP4262  | Rheostat |   2    | NV-Wiper |    257     |
+| MCP4141  | Potmeter |   1    | NV-Wiper |    128     |
+| MCP4142  | Rheostat |   1    | NV-Wiper |    128     |
+| MCP4161  | Potmeter |   1    | NV-Wiper |    256     |
+| MCP4162  | Rheostat |   1    | NV-Wiper |    256     |
+| MCP4241  | Potmeter |   2    | NV-Wiper |    128     |
+| MCP4242  | Rheostat |   2    | NV-Wiper |    128     |
+| MCP4261  | Potmeter |   2    | NV-Wiper |    256     |  base class, under test.
+| MCP4262  | Rheostat |   2    | NV-Wiper |    256     |
 
 
 #### To investigate:
@@ -105,8 +107,8 @@ Table 4.1 from datasheet (p 29)
 
 |  Address  |  Function                |  Memory Type  |  Notes  |
 |:---------:|:------------------------:|:--------------|:--------|
-|  00h      |  Volatile Wiper 0        |  RAM          |  range 0..257 (129)
-|  01h      |  Volatile Wiper 1        |  RAM          |  range 0..257 (129)
+|  00h      |  Volatile Wiper 0        |  RAM          |  range 0..256 (128)
+|  01h      |  Volatile Wiper 1        |  RAM          |  range 0..256 (128)
 |  02h      |  Non-Volatile Wiper 0    |  EEPROM       |  set Power on Reset, range idem.
 |  03h      |  Non-Volatile Wiper 1    |  EEPROM       |  set Power on Reset, range idem.
 |  04h      |  Volatile TCON Register  |  RAM          |
@@ -117,7 +119,25 @@ Is this overview needed?
 
 ## Performance indication
 
-TODO table
+See performance example.
+
+Indicative times in microseconds, version 0.2.0
+
+|       |  function        |  1 MHz  |  2 MHz  |  4 MHz  |  8 MHz  |  SW SPI  |
+|:-----:|:-----------------|:-------:|:-------:|:-------:|:-------:|:--------:|
+|  UNO  |  setValue        |  34.4   |  26.4   |  22.3   |  20.3   |  312.5   |
+|  UNO  |  getValue        |   0.8   |   0.8   |   0.8   |   0.8   |    0.8   |
+|  UNO  |  getValueDevice  |  36.4   |  28.34  |  24.4   |  22.3   |  314.3   |
+|  UNO  |  incrValue       |  24.2   |  20.2   |  18.2   |  17.2   |  162.9   |
+|  UNO  |  decrValue       |  23.9   |  20.0   |  17.9   |  16.9   |  162.6   |
+
+Other boards might be added.
+
+Notes:
+- EEPROM and NON-Volatile registers read performance is in the same order as the
+getValueDevice() function.  
+-  EEPROM and NON-Volatile registers write performance is in the same order as the 
+setValue() function, however depends on if there was a recent write (< 5 ms ago).
 
 
 ## Interface
@@ -142,7 +162,7 @@ from the device. These values are cached.
 ### Set Volatile Values
 
 - **bool setValue(uint16_t value)** set all potmeters to the same value. (wrapper).
-Value can be 0..257 (129 depending on type).
+Value can be 0..256 (128 depending on type).
 Returns true.
 - **bool setValue(uint8_t pm, uint16_t value)** set a single potmeter (0 or 1).
 Returns false if pm > pmCount or if value too large.
@@ -159,8 +179,8 @@ Returns false if this fails, e.g. zero reached.
 - **bool setValueNV(uint8_t pm, uint16_t value)** set the power on reset value for potmeter.
 - **uint16_t getValueNV(uint8_t pm)** retrieves set value from device.
 
-The NV functions do not check the status register if an EEPROM write is 
-pending.
+The NV functions do not check the status register if an EEPROM write is pending. 
+If you want to write both registers you need to pause 5-10 ms between the calls.
 
 
 ### Terminal Control register (TCON)
@@ -191,22 +211,23 @@ See datasheet form details.
 
 ### EEPROM
 
-- **bool setEEPROM(uint8_t ee, uint16_t value)** ee = 0..9  value = 0..511.
-Returns false if ee > 9 or value out of range.
-- **uint16_t getEEPROM(uint8_t ee)** Returns set value, or 0 if ee > 9.
+- **bool setEEPROM(uint8_t index, uint16_t value)** index = 0..9  value = 0..511.
+Returns false if index > 9 or value out of range.
+- **uint16_t getEEPROM(uint8_t index)** Returns set value, or 0 if index > 9.
 
 The EEPROM functions do not check the status register if an EEPROM write is 
 pending. (might take up to 10 ms).
 
+If you want to write multiple registers you need to pause 5-10 ms between the calls.
 
 ### SPI
 
 Note changing the SPI speed might affect other devices on the same SPI bus.
 So use with care.
 
-- **void setSPIspeed(uint32_t speed)** default 1MHz, typical 4 MHz.
+- **void setSPIspeed(uint32_t speed)** default 1 MHz, typical 4 MHz.
 - **uint32_t getSPIspeed()** idem.
-- **bool usesHWSPI()** idem.
+- **bool usesHWSPI()** idem, depends on which constructor used.
 
 
 ### Power
@@ -223,7 +244,6 @@ Uses the shutdown pin from the constructor.
 #### Must
 
 - improve documentation
-- TODO fix TODO in docs + code
 
 #### Should 
 
@@ -232,10 +252,11 @@ Uses the shutdown pin from the constructor.
   - MCP4231/32/51/52
 - pending EEPROM write?
   - blocking 5-10 ms?, see page 10 datasheet.
-  - status check for EEPROM? (robust)
-  - lastEE_timestamp? (fast)
+  - status check for EEPROM? (robust, also in MT environment)
+  - lastEE_timestamp? (fast, works if long ago)
+  - mix?
   - What is a good strategy?
-  - **bool isEEWritePending()**?
+  - **bool isEEWritePending()**? should be non-blocking.
   - Also for the NV write function as one needs to write two registers.
 - elaborate TCON settings.
   - investigate behaviour.
@@ -247,7 +268,8 @@ Uses the shutdown pin from the constructor.
 - investigate error handling
   - improve return values
 - investigate performance
-  - extend performance sketch. (low prio)
+  - extend performance sketch.
+  - other boards, extend table.
   - AVR SW SPI? (only on request)
   - const usage?
 

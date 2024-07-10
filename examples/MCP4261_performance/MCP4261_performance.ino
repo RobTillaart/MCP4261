@@ -16,7 +16,7 @@ uint32_t start, stop;
 MCP4261 pot(10, 6, 7, 8, 9);
 
 //  select, shutdown, &SPI === HW SPI UNO clock = 13, data = 11
-// MCP4261 pot(10, 6, &SPI);
+//  MCP4261 pot(10, 6, &SPI);
 
 
 void setup()
@@ -79,6 +79,19 @@ void test_timing()
   }
   stop = micros();
   Serial.print("500 x getValue():\t");
+  Serial.print(stop - start);
+  Serial.print("\t");
+  Serial.println((stop - start) / 500.0);
+  delay(100);
+
+  start = micros();
+  for (int i = 0; i < 250; i++)
+  {
+    x += pot.getValueDevice(0);
+    x += pot.getValueDevice(1);
+  }
+  stop = micros();
+  Serial.print("500 x getValueDevice():\t");
   Serial.print(stop - start);
   Serial.print("\t");
   Serial.println((stop - start) / 500.0);

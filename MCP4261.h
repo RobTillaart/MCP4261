@@ -20,16 +20,16 @@
 #endif
 
 #ifndef MCP41XX_MAX_VALUE
-#define MCP41XX_MAX_VALUE             129
+#define MCP41XX_MAX_VALUE             128
 #endif
 
 
 #ifndef MCP42XX_MIDDLE_VALUE
-#define MCP42XX_MIDDLE_VALUE          129
+#define MCP42XX_MIDDLE_VALUE          128
 #endif
 
 #ifndef MCP42XX_MAX_VALUE
-#define MCP42XX_MAX_VALUE             257
+#define MCP42XX_MAX_VALUE             256
 #endif
 
 
@@ -98,9 +98,9 @@ public:
   //
   //  EEPROM
   //
-  //  ee = 0..9  value = 0..511
-  bool     setEEPROM(uint8_t ee, uint16_t value);
-  uint16_t getEEPROM(uint8_t ee);
+  //  index = 0..9  value = 0..511
+  bool     setEEPROM(uint8_t index, uint16_t value);
+  uint16_t getEEPROM(uint8_t index);
 
   //
   //  POWER
